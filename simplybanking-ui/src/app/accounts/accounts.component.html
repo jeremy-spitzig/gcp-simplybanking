@@ -1,0 +1,10 @@
+<mat-card *ngFor="let account of accounts">
+  <mat-card-title>
+    <a mat-button routerLink="/account-details/{{account.id}}">
+      {{account.label}}
+    </a>
+  </mat-card-title>
+  <mat-card-content>
+    Balance: {{account.balance | currency}}
+  </mat-card-content>
+</mat-card>

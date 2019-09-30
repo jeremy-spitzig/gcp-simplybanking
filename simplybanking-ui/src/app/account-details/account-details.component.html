@@ -1,0 +1,27 @@
+<mat-card>
+  <mat-card-content style="display:flex;flex-direction: row;">
+    <b style="flex:1;text-align: left;">
+      Description
+    </b>
+    <b style="width:150px;text-align: right;">
+      Credit Amount
+    </b>
+    <b style="width:150px;text-align: right;">
+      Debit Amount
+    </b>
+  </mat-card-content>
+  <mat-card-content style="display:flex;flex-direction: row;" *ngFor="let logEntry of logEntries"
+      [ngStyle]="{
+        'font-style': logEntry.pending ? 'italic' : 'normal'
+      }">
+    <span style="flex:1;text-align:left;">
+      {{logEntry.description}}
+    </span>
+    <span style="width:150px;text-align: right;">
+      {{logEntry.credit | currency}}
+    </span>
+    <span style="width:150px;text-align: right;">
+      {{logEntry.debit | currency}}
+    </span>
+  </mat-card-content>
+</mat-card>

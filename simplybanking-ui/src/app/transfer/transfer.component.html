@@ -1,0 +1,48 @@
+<mat-card>
+  <mat-card-title>
+    Transfer
+  </mat-card-title>
+  <mat-card-content>
+    <form class="form">
+      <table>
+        <tr>
+          <td colspan="2">
+            <mat-form-field class="full-width">
+              <mat-select [(ngModel)]="transferRequestInfo.fromAccountId" name="fromAccount" placeholder="From Account">
+                <mat-option *ngFor="let account of availableAccounts" [value]="account.id">
+                  {{account.label}} - {{account.balance | currency}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <mat-form-field class="full-width">
+              <mat-select [(ngModel)]="transferRequestInfo.toAccountId" name="toAccount" placeholder="To Account">
+                <mat-option *ngFor="let account of availableAccounts" [value]="account.id">
+                  {{account.label}} - {{account.balance | currency}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <mat-form-field class="full-width">
+              <input matInput type="number"  placeholder="Amount" name="amount" [(ngModel)]="transferRequestInfo.amount">
+            </mat-form-field>
+          </td>
+        </tr>
+        <tr>
+          <td class="content-right">
+            <button mat-raised-button color="accent" (click)="transfer()">Transfer</button>
+          </td>
+          <td class="content-left">
+            <button mat-raised-button color="accent">Cancel</button>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </mat-card-content>
+</mat-card>

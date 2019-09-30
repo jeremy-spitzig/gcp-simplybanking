@@ -1,0 +1,7 @@
+<p *ngFor="let headline of headlines">
+  <mat-card>
+    <mat-card-title>{{headline.title}}</mat-card-title>
+    <mat-card-content>{{headline.body}}</mat-card-content>
+    <mat-card-footer><i>Posted {{headline.datePosted | date : 'short'}}</i></mat-card-footer>
+  </mat-card>
+</p>

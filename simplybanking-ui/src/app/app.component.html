@@ -1,0 +1,20 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row style="display:flex">
+    <button mat-button routerLink="/"><h2>SimplyBanking</h2></button>
+
+    <div style="display:flex;flex:1;justify-content:flex-end;">
+      <span *ngIf="currentUser != null">
+        <span style="margin-right: 20px;">Welcome back {{currentUser.firstName}}!</span>
+        <button mat-button routerLink="/transfer">Perform Transfer</button>
+        <button mat-button routerLink="/accounts">My Accounts</button>
+        <button mat-button (click)="logout()">Log Out</button>
+      </span>
+      <span *ngIf="currentUser == null">
+        <button mat-button routerLink="/login">Log In</button>
+      </span>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>
+<div>
+  <router-outlet></router-outlet>
+</div>
