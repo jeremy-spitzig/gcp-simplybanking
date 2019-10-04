@@ -30,6 +30,7 @@ class SecurityConfig(
             .authenticationEntryPoint(restAuthenticationEntryPoint)
             .and()
             .authorizeRequests()
+            .antMatchers("/actuator/**").permitAll()
             .antMatchers("/headline").permitAll()
             .antMatchers("/login").permitAll()
             .antMatchers("/auth/currentUser").permitAll()
