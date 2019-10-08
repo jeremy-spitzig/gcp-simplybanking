@@ -1,11 +1,11 @@
 provider "google" {
-  credentials = "${file("~/.gcp/credentials/terraform-deploy_simplybanking-v3.json")}"
-  project     = "simplybankingversion3"
+  credentials = "${file("~/.gcp/credentials/terraform-deploy_simplybanking-v4.json")}"
+  project     = "simplybankingversion4"
   region      = "southamerica-east1"
 }
 
 resource "google_storage_bucket" "simplybanking-artifact-store" {
-  name     = "simplybanking-artifact-store-bucket-v3"
+  name     = "simplybanking-artifact-store-bucket-v4"
   location = "southamerica-east1"
 }
 
@@ -20,7 +20,7 @@ resource "google_storage_bucket_acl" "simplybanking-artifact-store-acl" {
 resource "google_storage_bucket_object" "api-artifact" {
   name   = "api.jar"
   source = "../simplybanking-api/build/libs/api-2.0.0.jar"
-  bucket = "simplybanking-artifact-store-bucket-v3"
+  bucket = "simplybanking-artifact-store-bucket-v4"
 }
 
 resource "google_storage_object_acl" "simplybanking-api-artifact-acl" {
@@ -35,7 +35,7 @@ resource "google_storage_object_acl" "simplybanking-api-artifact-acl" {
 resource "google_storage_bucket_object" "ui-artifact" {
   name   = "ui.tar.gz"
   source = "../simplybanking-ui/dist/simplybanking-ui.tar.gz"
-  bucket = "simplybanking-artifact-store-bucket-v3"
+  bucket = "simplybanking-artifact-store-bucket-v4"
 }
 
 resource "google_storage_object_acl" "simplybanking-ui-artifact-acl" {
@@ -71,11 +71,11 @@ resource "google_compute_instance_template" "simplybanking-api-it" {
   tags = ["api", "http-server"]
 
   metadata_startup_script     = <<EOF
-  gsutil cp gs://simplybanking-artifact-store-bucket-v3/api.jar .; 
+  gsutil cp gs://simplybanking-artifact-store-bucket-v4/api.jar .; 
   apt-get update;
   apt-get install -t stretch-backports -yq openjdk-8-jdk;
   update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
-  java -jar api.jar --spring.datasource.url=jdbc:postgresql://34.69.31.148:5432/postgres --spring.data.mongodb.host=simplybanking-data-services --spring.redis.host=10.140.188.11 --hibernate.dialect=org.hibernate.dialect.PostgreSQL95Dialect --server.port=80
+  java -jar api.jar --spring.datasource.url=jdbc:postgresql://35.247.215.9:5432/postgres --spring.redis.host=10.67.39.179 --hibernate.dialect=org.hibernate.dialect.PostgreSQL95Dialect --server.port=80
   EOF
 
 
@@ -146,7 +146,7 @@ resource "google_compute_instance" "transaction-ui" {
   allow_stopping_for_update   = true
 
   metadata_startup_script     = <<EOF
-  gsutil cp gs://simplybanking-artifact-store-bucket-v3/ui.tar.gz .;
+  gsutil cp gs://simplybanking-artifact-store-bucket-v4/ui.tar.gz .;
   tar -xvzf ui.tar.gz;
   apt-get update;
   apt-get install -yq apache2;
