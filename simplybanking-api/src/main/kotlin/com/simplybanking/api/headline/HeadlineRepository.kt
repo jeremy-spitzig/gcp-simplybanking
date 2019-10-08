@@ -1,6 +1,6 @@
 package com.simplybanking.api.headline
 
-import org.springframework.data.mongodb.repository.MongoRepository
+import org.springframework.cloud.gcp.data.datastore.repository.DatastoreRepository
 
-interface HeadlineRepository : MongoRepository<Headline, String> {
+interface HeadlineRepository : DatastoreRepository<Headline, String> {
 }

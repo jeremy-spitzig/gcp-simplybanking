@@ -1,11 +1,11 @@
 provider "google" {
-  credentials = "${file("~/.gcp/credentials/terraform-deploy_simplybanking.json")}"
-  project     = "simplybankingversion2"
+  credentials = "${file("~/.gcp/credentials/terraform-deploy_simplybanking-v3.json")}"
+  project     = "simplybankingversion3"
   region      = "southamerica-east1"
 }
 
 resource "google_storage_bucket" "simplybanking-artifact-store" {
-  name     = "simplybanking-artifact-store-bucket"
+  name     = "simplybanking-artifact-store-bucket-v3"
   location = "southamerica-east1"
 }
 
@@ -20,7 +20,7 @@ resource "google_storage_bucket_acl" "simplybanking-artifact-store-acl" {
 resource "google_storage_bucket_object" "api-artifact" {
   name   = "api.jar"
   source = "../simplybanking-api/build/libs/api-2.0.0.jar"
-  bucket = "simplybanking-artifact-store-bucket"
+  bucket = "simplybanking-artifact-store-bucket-v3"
 }
 
 resource "google_storage_object_acl" "simplybanking-api-artifact-acl" {
@@ -35,7 +35,7 @@ resource "google_storage_object_acl" "simplybanking-api-artifact-acl" {
 resource "google_storage_bucket_object" "ui-artifact" {
   name   = "ui.tar.gz"
   source = "../simplybanking-ui/dist/simplybanking-ui.tar.gz"
-  bucket = "simplybanking-artifact-store-bucket"
+  bucket = "simplybanking-artifact-store-bucket-v3"
 }
 
 resource "google_storage_object_acl" "simplybanking-ui-artifact-acl" {
@@ -71,11 +71,11 @@ resource "google_compute_instance_template" "simplybanking-api-it" {
   tags = ["api", "http-server"]
 
   metadata_startup_script     = <<EOF
-  gsutil cp gs://simplybanking-artifact-store-bucket/api.jar .; 
+  gsutil cp gs://simplybanking-artifact-store-bucket-v3/api.jar .; 
   apt-get update;
   apt-get install -t stretch-backports -yq openjdk-8-jdk;
   update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
-  java -jar api.jar --spring.datasource.url=jdbc:postgresql://simplybanking-data-services:5432/postgres --spring.data.mongodb.host=simplybanking-data-services --spring.redis.host=simplybanking-data-services --hibernate.dialect=org.hibernate.dialect.PostgreSQL95Dialect --server.port=80
+  java -jar api.jar --spring.datasource.url=jdbc:postgresql://34.69.31.148:5432/postgres --spring.data.mongodb.host=simplybanking-data-services --spring.redis.host=10.140.188.11 --hibernate.dialect=org.hibernate.dialect.PostgreSQL95Dialect --server.port=80
   EOF
 
 
@@ -146,7 +146,7 @@ resource "google_compute_instance" "transaction-ui" {
   allow_stopping_for_update   = true
 
   metadata_startup_script     = <<EOF
-  gsutil cp gs://simplybanking-artifact-store-bucket/ui.tar.gz .;
+  gsutil cp gs://simplybanking-artifact-store-bucket-v3/ui.tar.gz .;
   tar -xvzf ui.tar.gz;
   apt-get update;
   apt-get install -yq apache2;
@@ -171,57 +171,18 @@ resource "google_compute_instance" "transaction-ui" {
   }
 }
 
-resource "google_compute_instance" "simplybanking-data-services" {
-  name                        = "simplybanking-data-services"
-  machine_type                = "n1-standard-1"
-  zone                        = "southamerica-east1-b"
-  tags                        = ["data-services"]
-  allow_stopping_for_update   = true
+#resource "google_compute_firewall" "allow-traffic-to-data-services" {
+#  name    = "allow-traffic-to-data-services"
+#  network = "default"
+#
+#  allow {
+#    protocol = "tcp"
+#    ports    = ["5432", "27017", "6379"]
+#  }
 
-  metadata_startup_script     = <<EOF
-  apt-get update;
-  apt-get install -yq apt-transport-https ca-certificates curl gnupg2 software-properties-common;
-  curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -;
-  add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
-  apt-get update
-  apt-cache policy docker-ce
-  apt-get install -yq docker-ce
-  docker run -d -p 5432:5432 --name=simplybanking_postgres -e POSTGRES_PASSWORD=password postgres
-  docker run -d -p 27017:27017 --name=simplybanking_mongo --restart=unless-stopped mongo:bionic
-  docker run -d -p 6379:6379 --name=simplybanking_redis --restart=unless-stopped redis
-  EOF
-
-  boot_disk {
-      initialize_params {
-          image = "debian-cloud/debian-9"
-      }
-  }
-
-  network_interface {
-    network = "default"
-    access_config {
-    }
-
-  }
-
-  service_account {
-    scopes = ["cloud-platform"]
-  }
-}
-
-
-resource "google_compute_firewall" "allow-traffic-to-data-services" {
-  name    = "allow-traffic-to-data-services"
-  network = "default"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["5432", "27017", "6379"]
-  }
-
-  source_tags = ["api"]
-  target_tags = ["data-services"]
-}
+#  source_tags = ["api"]
+#  target_tags = ["data-services"]
+#}
 
 
 

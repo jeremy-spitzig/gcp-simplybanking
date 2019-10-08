@@ -5,7 +5,7 @@ import java.util.*
 
 data class Headline (
     @Id
-    val id : String? = null,
+    val id : Long? = null,
     val postedById : String,
     val title : String,
     val body : String,

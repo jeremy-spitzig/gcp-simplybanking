@@ -9,6 +9,7 @@ import com.simplybanking.api.users.UserRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.cloud.gcp.data.datastore.repository.config.EnableDatastoreRepositories
 import org.springframework.context.annotation.Bean
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -16,6 +17,7 @@ import java.math.BigDecimal
 import java.util.*
 
 @EnableJpaRepositories
+@EnableDatastoreRepositories
 @SpringBootApplication
 class WebApplication {
 	@Bean

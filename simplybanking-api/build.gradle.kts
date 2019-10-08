@@ -24,11 +24,13 @@ repositories {
 }
 
 extra["springBootAdminVersion"] = "2.1.5"
+extra["springCloudVersion"] = "Greenwich.SR3"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+	implementation("org.springframework.cloud:spring-cloud-gcp-starter")
+	implementation("org.springframework.cloud:spring-cloud-gcp-starter-data-datastore")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
@@ -47,6 +49,7 @@ dependencies {
 dependencyManagement {
 	imports {
 		mavenBom("de.codecentric:spring-boot-admin-dependencies:${property("springBootAdminVersion")}")
+		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
 	}
 }
 
